@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fa;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #444;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    li {
+      background: #ffffff;
+      margin: 10px 0;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .feedback-text {
+      flex: 1;
+    }
+
+    .action-buttons button {
+      background-color: #007BFF;
+      margin-left: 10px;
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+
+    .action-buttons button:nth-child(2) {
+      background-color: #dc3545;
+    }
+
+    .action-buttons button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Feedback Form</h1>
+
+  <form id="feedback-form">
+    <input type="text" id="name" placeholder="Enter First Name" required />
+    <select id="rating" required>
+      <option value="">Select Rating</option>
+      <option value="1">1 Star</option>
+      <option value="2">2 Star</option>
+      <option value="3">3 Star</option>
+      <option value="4">4 Star</option>
+      <option value="5">5 Star</option>
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Feedback List</h2>
+  <ul id="feedback-list"></ul>
+
+  <h2>Rating Summary</h2>
+  <ul id="rating-summary"></ul>
+
+  <script>
+    const form = document.getElementById('feedback-form');
+    const nameInput = document.getElementById('name');
+    const ratingInput = document.getElementById('rating');
+    const feedbackList = document.getElementById('feedback-list');
+    const ratingSummary = document.getElementById('rating-summary');
+
+    let feedbacks = [];
+    let editIndex = null;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = nameInput.value.trim();
+      const rating = parseInt(ratingInput.value);
+
+      if (!name || !rating) return;
+
+      const feedback = { name, rating };
+
+      if (editIndex !== null) {
+        feedbacks[editIndex] = feedback;
+        editIndex = null;
+      } else {
+        feedbacks.push(feedback);
+      }
+
+      form.reset();
+      renderFeedbacks();
+      renderSummary();
+    });
+
+    function renderFeedbacks() {
+      feedbackList.innerHTML = '';
+      feedbacks.forEach((fb, index) => {
+        const li = document.createElement('li');
+
+        const feedbackText = document.createElement('span');
+        feedbackText.className = 'feedback-text';
+        feedbackText.textContent = `${fb.name} - ${fb.rating} Star`;
+
+        const actionBtns = document.createElement('div');
+        actionBtns.className = 'action-buttons';
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => editFeedback(index);
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = () => deleteFeedback(index);
+
+        actionBtns.appendChild(editBtn);
+        actionBtns.appendChild(delBtn);
+
+        li.appendChild(feedbackText);
+        li.appendChild(actionBtns);
+
+        feedbackList.appendChild(li);
+      });
+    }
+
+    function renderSummary() {
+      const summary = [0, 0, 0, 0, 0];
+      feedbacks.forEach(fb => {
+        summary[fb.rating - 1]++;
+      });
+
+      ratingSummary.innerHTML = '';
+      summary.forEach((count, i) => {
+        if (count > 0) {
+          const li = document.createElement('li');
+          li.textContent = `${i + 1} Star Rating: ${count}`;
+          ratingSummary.appendChild(li);
+        }
+      });
+    }
+
+    function editFeedback(index) {
+      nameInput.value = feedbacks[index].name;
+      ratingInput.value = feedbacks[index].rating;
+      editIndex = index;
+    }
+
+    function deleteFeedback(index) {
+      feedbacks.splice(index, 1);
+      renderFeedbacks();
+      renderSummary();
+    }
+  </script>
+</body>
+</html>
