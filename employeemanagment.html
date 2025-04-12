@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+<h1>Employee managment system</h1>
+
+<label for="">Name:</label>
+<input type="text" name="" id="name">
+<label for="">ID:</label>
+<input type="number" id="id">
+<label for="">Salary:</label>
+<input type="number" id="salary">
+
+<button onclick="AddEmployee()">ADD Employee</button>
+
+<div id="card">
+
+</div>
+
+<p id="p">Total Employee:</p>
+
+<script>
+  function AddEmployee(){
+    let NameOfEmployee = document.getElementById('name').value.trim();
+    let IdOfEmployee = document.getElementById('id').value.trim();
+    let SalaryOfEmployee = parseInt(document.getElementById('salary').value.trim());
+
+    let EmployeeSection = document.getElementById('card');
+    let TotalEmployee = document.getElementById('p');
+
+
+    let element = document.createElement('div');
+    element.className="employee";
+    element.innerHTML=`Name: ${NameOfEmployee} | ID: ${IdOfEmployee} | <span class='sal'>Salary: ${SalaryOfEmployee}</span>
+    <input type="number" class="addbonus" placeholder="Bonus Amount"/>
+    <button class="fire">Fire-Employee</button>
+      <button class="bonus">Bonus</button>`;
+
+
+      let fire = element.querySelector('.fire');
+    fire.addEventListener('click',()=>{
+      element.remove();
+    });
+
+
+    let addbonusbtn = element.querySelector('.bonus');
+
+    addbonusbtn.addEventListener('click',()=>{
+      let Bonusvalue = parseInt(element.querySelector('.addbonus').value.trim());
+      let DisplayBonus = element.querySelector('.sal');
+      let newval = Bonusvalue+SalaryOfEmployee;
+      DisplayBonus.innerText="Salary : " + newval;
+    })
+
+    EmployeeSection.append(element);
+
+     document.getElementById('name').value="";
+    document.getElementById('id').value="";
+     document.getElementById('salary').value="";
+
+
+  }
+</script>
+</body>
+</html>
